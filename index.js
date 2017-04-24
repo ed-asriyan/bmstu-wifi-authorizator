@@ -7,6 +7,7 @@
 const pageLogin = document.getElementById('page_login');
 const pageConnecting = document.getElementById('page_connecting');
 const pageConnected = document.getElementById('page_connected');
+const pageDisconnecting = document.getElementById('page_disconnecting');
 
 const forms = document.getElementById('pages').childNodes;
 
@@ -29,5 +30,8 @@ const onLoginClick = function () {
 };
 
 const onLogoutClick = function () {
-    showPage(pageLogin);
+    showPage(pageDisconnecting);
+
+    // imitating
+    setTimeout(() => showPage(pageLogin), 2000);
 };
