@@ -12,7 +12,7 @@ const url = require('url');
 app.on('ready', () => {
     let mainWindow = new BrowserWindow({
         width: 350,
-        height: 195,
+        height: 235,
         resizable: false,
         center: true,
         webSecurity: false,
