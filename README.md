@@ -1,0 +1,1 @@
+# BMSTU Wi-Fi Authorizator
