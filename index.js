@@ -5,6 +5,7 @@
 'use strict';
 
 const pageLogin = document.getElementById('page_login');
+const pageConnecting = document.getElementById('page_connecting');
 
 const forms = document.getElementById('pages').childNodes;
 
@@ -14,3 +15,14 @@ const showPage = function (page) {
 };
 
 showPage(pageLogin);
+
+
+/**
+ * Routed events
+ */
+const onLoginClick = function () {
+    showPage(pageConnecting);
+
+    // imitating
+    setTimeout(() => showPage(pageConnected), 2000);
+};
