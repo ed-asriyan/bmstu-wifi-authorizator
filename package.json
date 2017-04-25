@@ -1,0 +1,13 @@
+{
+  "name": "bmstu-wifi-authorizator",
+  "version": "0.0.1",
+  "description": "BMSTU WiFi authorizator",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "author": "Ed Asriyan",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "electron": "^1.6.5"
+  }
+}
