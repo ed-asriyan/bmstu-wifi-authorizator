@@ -4,20 +4,29 @@
 
 'use strict';
 
+/**
+ * Pages
+ * @type {Element}
+ */
 const pageLogin = document.getElementById('page_login');
 const pageConnecting = document.getElementById('page_connecting');
 const pageConnected = document.getElementById('page_connected');
 const pageDisconnecting = document.getElementById('page_disconnecting');
+const pageError = document.getElementById('page_error');
 
-const forms = document.getElementById('pages').childNodes;
+const pages = document.getElementById('pages').childNodes;
 
 const showPage = function (page) {
-    forms.forEach(page => page.hidden = true);
+    pages.forEach(page => page.hidden = true);
     page.hidden = false;
 };
 
 showPage(pageLogin);
 
+/**
+ * Controls
+ */
+const controlErrorDescription = document.getElementById('page_error_description');
 
 /**
  * Routed events
@@ -33,5 +42,11 @@ const onLogoutClick = function () {
     showPage(pageDisconnecting);
 
     // imitating
-    setTimeout(() => showPage(pageLogin), 2000);
+    setTimeout(() => {
+        controlErrorDescription.innerHTML = 'Unable to logout';
+        showPage(pageError);
+        setTimeout(() => {
+            showPage(pageLogin);
+        }, 2000);
+    }, 2000);
 };
