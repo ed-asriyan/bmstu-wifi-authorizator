@@ -4,6 +4,8 @@
 
 'use strict';
 
+const Session = require('./session');
+const session = new Session();
 /**
  * Pages
  * @type {Element}
