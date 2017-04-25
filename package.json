@@ -8,6 +8,7 @@
   "author": "Ed Asriyan",
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "electron": "^1.6.5"
+    "electron": "^1.6.5",
+    "node-fetch": "^1.6.3"
   }
 }
