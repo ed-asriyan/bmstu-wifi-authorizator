@@ -19,6 +19,14 @@ const pageError = document.getElementById('page_error');
 
 const pages = document.getElementById('pages').childNodes;
 
+/**
+ * Controls
+ */
+const controlLogin = document.getElementById('page_login_username_input');
+const controlPassword = document.getElementById('page_login_password_input');
+const controlErrorDescription = document.getElementById('page_error_description');
+const controlInternetIndicator = document.getElementById('internet_indicator');
+
 const showPage = function (page) {
     pages.forEach(page => page.hidden = true);
     page.hidden = false;
@@ -26,12 +34,14 @@ const showPage = function (page) {
 
 showPage(pageLogin);
 
-/**
- * Controls
- */
-const controlLogin = document.getElementById('page_login_username_input');
-const controlPassword = document.getElementById('page_login_password_input');
-const controlErrorDescription = document.getElementById('page_error_description');
+setInterval(() => {
+    controlInternetIndicator.style.color = '#ccb900';
+    session.checkConnection()
+        .then(r => {
+            controlInternetIndicator.style.color = r ? '#28a900' : '#a20c0f';
+        })
+}, 6000);
+
 
 /**
  * Routed events
@@ -60,3 +70,4 @@ const onLogoutClick = function () {
         setTimeout(() => showPage(pageConnected), 3000);
     });
 };
+
