@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMSTU Wi-Fi Authorizator</title>
+
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+</head>
+<body>
+<script src="index.js" defer></script>
+
+<div class="container" style="padding: 20px">
+    <div class="row">
+        <div id="pages" class="col-xs-10 col-xs-offset-1">
+            <div id="page_login" class="form-horizontal">
+                <div id="page_login_username_group" class="form-group">
+                    <input id="page_login_username_input" class="form-control" type="text" placeholder="Login"
+                           style="text-align: center">
+                </div>
+                <div id="form_login_password_group" class="form-group">
+                    <input id="page_login_password_input" class="form-control" type="password" placeholder="Password"
+                           style="text-align: center">
+                </div>
+                <div id="form_login_remember_group" class="form-group" align="middle">
+                    <div class="checkbox">
+                        <label>
+                            <input id="form_login_remember_input" type="checkbox" checked>Remember credentials
+                        </label>
+                    </div>
+                </div>
+                <div id="page_login_submit_group" class="form-group">
+                    <button id="page_login_submit_button" class="col-xs-offset-1 col-xs-10 btn btn-default"
+                            type="submit" style="height: 40px" onclick="onLoginClick()">Sign in
+                    </button>
+                </div>
+            </div>
+
+            <div id="page_connecting">
+                <label>Trying to connect...</label>
+            </div>
+
+            <div id="page_connected" class="form-horizontal">
+                <label>You're connected to the Internet</label>
+                <div id="page_connected_submit_group" class="form-group">
+                    <button id="page_connected_submit_button" class="col-xs-offset-1 col-xs-10 btn btn-default"
+                            type="submit" style="height: 40px" onclick="onLogoutClick()">Logout
+                    </button>
+                </div>
+            </div>
+
+            <div id="page_disconnecting">
+                <label>Trying to disconnect...</label>
+            </div>
+
+            <div id="page_error">
+                <label id="page_error_description"></label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <i id="internet_indicator" class="fa fa-globe" style="font-size: large;position: fixed"></i>
+    </div>
+</div>
+</body>
+</html>
