@@ -61,6 +61,14 @@ class Session {
         });
     }
 
+    checkConnection() {
+        const URL = 'https://google.com';
+        return this._call('GET', URL)
+            .then(() => true)
+            .catch(() => false);
+
+    }
+
     get isAuthenticated() {
         return this._logoutId;
     }
@@ -71,7 +79,8 @@ class Session {
 
     _call(httpMethod, url, data) {
         const initPomise = {
-            method: httpMethod
+            method: httpMethod,
+            timeout: 5000,
         };
         if (httpMethod === 'POST') {
             if (data !== undefined) {
