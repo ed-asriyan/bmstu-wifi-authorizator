@@ -4,12 +4,16 @@
 
 'use strict';
 
+/**
+ * Requiring
+ */
+const remote = require('electron').remote;
+const fs = require('fs');
 const Session = require('./session');
 const session = new Session();
 
 /**
  * Pages
- * @type {Element}
  */
 const pageLogin = document.getElementById('page_login');
 const pageConnecting = document.getElementById('page_connecting');
@@ -25,23 +29,45 @@ const pages = document.getElementById('pages').childNodes;
 const controlLogin = document.getElementById('page_login_username_input');
 const controlPassword = document.getElementById('page_login_password_input');
 const controlErrorDescription = document.getElementById('page_error_description');
+const controlRememberInput = document.getElementById('form_login_remember_input');
+const controlAutoLoginInput = document.getElementById('page_connected_autologin_input');
 const controlInternetIndicator = document.getElementById('internet_indicator');
 
+/**
+ * Manage functions
+ */
 const showPage = function (page) {
     pages.forEach(page => page.hidden = true);
     page.hidden = false;
 };
 
-showPage(pageLogin);
+const saveState = function () {
+    let saveObj = {
+        logoutId: session.logoutId,
+        saveCredentials: controlRememberInput.checked,
+        autoLogin: controlAutoLoginInput.checked,
+    };
+    if (controlRememberInput.checked) {
+        saveObj.login = controlLogin.value;
+        saveObj.password = controlPassword.value;
+    }
 
-setInterval(() => {
-    controlInternetIndicator.style.color = '#ccb900';
-    session.checkConnection()
-        .then(r => {
-            controlInternetIndicator.style.color = r ? '#28a900' : '#a20c0f';
-        })
-}, 6000);
+    fs.writeFileSync('bmstu-wifi-authorizator.save', JSON.stringify(saveObj));
+};
 
+const loadState = function () {
+    let saveObj = JSON.parse(fs.readFileSync('bmstu-wifi-authorizator.save'));
+
+    controlLogin.value = saveObj.login || '';
+    controlPassword.value = saveObj.password || '';
+    controlRememberInput.checked = saveObj.saveCredentials;
+    controlAutoLoginInput.checked = saveObj.autoLogin;
+    if (saveObj.logoutId) {
+        session.login({
+            logoutId: saveObj.logoutId
+        }).then(() => showPage(pageConnected));
+    }
+};
 
 /**
  * Routed events
@@ -71,3 +97,25 @@ const onLogoutClick = function () {
     });
 };
 
+/**
+ * Logic
+ */
+remote.getCurrentWindow().on('close', () => {
+    saveState();
+});
+
+try {
+    loadState();
+} catch (e) {
+}
+
+
+showPage(pageLogin);
+
+setInterval(() => {
+    controlInternetIndicator.style.color = '#ccb900';
+    session.checkConnection()
+        .then(r => {
+            controlInternetIndicator.style.color = r ? '#28a900' : '#a20c0f';
+        })
+}, 6000);
