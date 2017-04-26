@@ -16,7 +16,10 @@ class Session {
     login(options) {
         options = options || {};
         if (options.logoutId) {
-            this._logoutId = options.logoutId;
+            return new Promise(function (resolve) {
+                this._logoutId = options.logoutId;
+                resolve();
+            }.bind(this));
         } else {
             let login = options.login;
             let password = options.password;
@@ -58,7 +61,8 @@ class Session {
                 // todo: create exception class
                 throw "Can not logout";
             }
-        });
+            delete this._logoutId;
+        }.bind(this));
     }
 
     checkConnection() {
@@ -78,16 +82,16 @@ class Session {
     }
 
     _call(httpMethod, url, data) {
-        const initPomise = {
+        const initPromise = {
             method: httpMethod,
             timeout: 5000,
         };
         if (httpMethod === 'POST') {
             if (data !== undefined) {
-                initPomise.headers = {
+                initPromise.headers = {
                     'Content-type': 'application/x-www-form-urlencoded',
                 };
-                initPomise.body = Object.keys(data)
+                initPromise.body = Object.keys(data)
                     .map(x => {
                         return `${x}=${data[x]}`;
                     }).reduce((a, b) => {
