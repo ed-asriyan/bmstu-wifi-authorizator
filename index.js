@@ -6,6 +6,7 @@
 
 const Session = require('./session');
 const session = new Session();
+
 /**
  * Pages
  * @type {Element}
@@ -28,6 +29,8 @@ showPage(pageLogin);
 /**
  * Controls
  */
+const controlLogin = document.getElementById('page_login_username_input');
+const controlPassword = document.getElementById('page_login_password_input');
 const controlErrorDescription = document.getElementById('page_error_description');
 
 /**
@@ -35,20 +38,25 @@ const controlErrorDescription = document.getElementById('page_error_description'
  */
 const onLoginClick = function () {
     showPage(pageConnecting);
-
-    // imitating
-    setTimeout(() => showPage(pageConnected), 2000);
+    session.login({
+        login: controlLogin.value,
+        password: controlPassword.value,
+    }).then(() => {
+        showPage(pageConnected);
+    }).catch(e => {
+        controlErrorDescription.innerHTML = e;
+        showPage(pageError);
+        setTimeout(() => showPage(pageLogin), 3000);
+    });
 };
 
 const onLogoutClick = function () {
     showPage(pageDisconnecting);
-
-    // imitating
-    setTimeout(() => {
-        controlErrorDescription.innerHTML = 'Unable to logout';
+    session.logout().then(() => {
+        showPage(pageLogin);
+    }).catch(e => {
+        controlErrorDescription.innerHTML = e;
         showPage(pageError);
-        setTimeout(() => {
-            showPage(pageLogin);
-        }, 2000);
-    }, 2000);
+        setTimeout(() => showPage(pageConnected), 3000);
+    });
 };

@@ -4,14 +4,17 @@
 
 'use strict';
 
+// todo: integrate the logger
 const fetch = require('node-fetch');
+const named = require('named-regexp').named;
 
 class Session {
     constructor() {
 
     }
 
-    login(options = {}) {
+    login(options) {
+        options = options || {};
         if (options.logoutId) {
             this._logoutId = options.logoutId;
         } else {
@@ -21,14 +24,26 @@ class Session {
             const URL = 'https://lbpfs.bmstu.ru:8003/index.php?zone=bmstu_lb';
 
             return this._call('POST', URL, {
-                auth_user: login,
-                auth_pass: password,
-            });
+                'auth_user': login,
+                'auth_pass': password,
+                'accept': 'Continue',
+            }).then((function (response) {
+                process.stdout.write(response);
+                let regex = named(/name="logout_id" +type="hidden" +value="(:<logout_id>\w+)"/);
+                let matched = regex.exec(response);
+                if (matched) {
+                    this._logoutId = matched.capture('logout_id');
+                    process.stdout.write(this._logoutId);
+                } else {
+                    // todo: create exception class
+                    throw "Can not login";
+                }
+            }).bind(this));
         }
     }
 
     logout() {
-        if (this.isAuthenticated) {
+        if (!this.isAuthenticated) {
             // todo: create exception class
             throw {};
         }
@@ -36,8 +51,13 @@ class Session {
         const URL = 'https://lbpfs.bmstu.ru:8003/';
 
         return this._call('POST', URL, {
-            logout_id: this._logoutId,
-            zone: 'bmstu_lb',
+            'logout_id': this._logoutId,
+            'zone': 'bmstu_lb',
+        }).then(function (response) {
+            if (response.indexOf('You have been disconnected') < 0) {
+                // todo: create exception class
+                throw "Can not logout";
+            }
         });
     }
 
@@ -63,10 +83,12 @@ class Session {
                         return `${x}=${data[x]}`;
                     }).reduce((a, b) => {
                         return `${a}&${b}`;
-                    })
+                    });
             }
         }
-        return fetch(url, initPomise);
+
+        return fetch(url, initPomise)
+            .then(response => response.text());
     }
 }
 
