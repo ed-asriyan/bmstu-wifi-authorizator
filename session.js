@@ -100,7 +100,7 @@ class Session {
             }
         }
 
-        return fetch(url, initPomise)
+        return fetch(url, initPromise)
             .then(response => response.text());
     }
 }
