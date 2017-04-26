@@ -117,5 +117,9 @@ setInterval(() => {
     session.checkConnection()
         .then(r => {
             controlInternetIndicator.style.color = r ? '#28a900' : '#a20c0f';
+
+            if (!r && session.isAuthenticated && controlAutoLoginInput.checked) {
+                onLoginClick();
+            }
         })
 }, 6000);
