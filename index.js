@@ -10,7 +10,10 @@
 const remote = require('electron').remote;
 const fs = require('fs');
 const Session = require('./session');
+const NetworkChecker = require('./networkChecker');
+
 const session = new Session();
+const networkChecker = new NetworkChecker();
 
 /**
  * Pages
@@ -69,6 +72,18 @@ const loadState = function () {
     }
 };
 
+const updateConnectionIndicator = function () {
+    if (networkChecker.isConnected) {
+        controlInternetIndicator.style.color = '#28a900';
+    } else {
+        if (networkChecker.isChecking) {
+            controlInternetIndicator.style.color = '#ccb900';
+        } else {
+            controlInternetIndicator.style.color = '#a20c0f';
+        }
+    }
+};
+
 /**
  * Routed events
  */
@@ -112,14 +127,8 @@ try {
 
 showPage(pageLogin);
 
-setInterval(() => {
-    controlInternetIndicator.style.color = '#ccb900';
-    session.checkConnection()
-        .then(r => {
-            controlInternetIndicator.style.color = r ? '#28a900' : '#a20c0f';
-
-            if (!r && session.isAuthenticated && controlAutoLoginInput.checked) {
-                onLoginClick();
-            }
-        })
-}, 6000);
+networkChecker.onConnect = updateConnectionIndicator;
+networkChecker.onDisconnect = updateConnectionIndicator;
+networkChecker.onCheckingBegin = updateConnectionIndicator;
+networkChecker.onCheckingEnd = updateConnectionIndicator;
+networkChecker.start();

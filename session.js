@@ -65,14 +65,6 @@ class Session {
         }.bind(this));
     }
 
-    checkConnection() {
-        const URL = 'https://google.com';
-        return this._call('GET', URL)
-            .then(() => true)
-            .catch(() => false);
-
-    }
-
     get isAuthenticated() {
         return this._logoutId;
     }
