@@ -78,6 +78,10 @@ class Session {
         return this._logoutId;
     }
 
+    set isAuthenticated(value) {
+        delete this._logoutId;
+    }
+
     get logoutId() {
         return this._logoutId;
     }
@@ -103,7 +107,7 @@ class Session {
 
         if (~remote.getGlobal('argv').indexOf('--fake-login')) // if (index !== -1)
             return new Promise(resolve =>
-                resolve('name="logout_id" type="hidden" value="frf" You have been disconnected'));
+                setTimeout(() => resolve('name="logout_id" type="hidden" value="frf" You have been disconnected'), 7500));
         return fetch(url, initPromise)
             .then(response => response.text());
     }
