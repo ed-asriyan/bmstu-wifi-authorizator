@@ -18,9 +18,9 @@ const networkChecker = new NetworkChecker();
 /**
  * Pages
  */
-const pageLogin = document.getElementById('page_login');
-const pageConnecting = document.getElementById('page_connecting');
-const pageConnected = document.getElementById('page_connected');
+const pageAuthenticate = document.getElementById('page_authenticate');
+const pageAuthentication = document.getElementById('page_authentication');
+const pageAuthenticated = document.getElementById('page_authenticated');
 const pageDisconnecting = document.getElementById('page_disconnecting');
 const pageError = document.getElementById('page_error');
 
@@ -70,7 +70,7 @@ const loadState = function () {
     if (saveObj.logoutId) {
         session.login({
             logoutId: saveObj.logoutId
-        }).then(() => showPage(pageConnected));
+        }).then(() => showPage(pageAuthenticated));
     }
 };
 
@@ -97,17 +97,17 @@ const updateConnectionIndicator = function () {
  * Routed events
  */
 const onLoginClick = function () {
-    showPage(pageConnecting);
+    showPage(pageAuthentication);
     networkChecker.stop();
     session.login({
         login: controlLogin.value,
         password: controlPassword.value,
     }).then(() => {
-        showPage(pageConnected);
+        showPage(pageAuthenticated);
     }).catch(e => {
         controlErrorDescription.innerHTML = e;
         showPage(pageError);
-        setTimeout(() => showPage(pageLogin), 3000);
+        setTimeout(() => showPage(pageAuthenticate), 3000);
     }).then(() => {
         setTimeout(() => {
             networkChecker.start();
@@ -119,11 +119,11 @@ const onLogoutClick = function () {
     showPage(pageDisconnecting);
     networkChecker.stop();
     session.logout().then(() => {
-        showPage(pageLogin);
+        showPage(pageAuthenticate);
     }).catch(e => {
         controlErrorDescription.innerHTML = e;
         showPage(pageError);
-        setTimeout(() => showPage(pageConnected), 3000);
+        setTimeout(() => showPage(pageAuthenticated), 3000);
     }).then(() => {
         setTimeout(() => {
             networkChecker.start();
@@ -144,7 +144,7 @@ try {
 }
 
 
-showPage(pageLogin);
+showPage(pageAuthenticate);
 
 networkChecker.onConnect = updateConnectionIndicator;
 networkChecker.onDisconnect = () => {
@@ -152,17 +152,17 @@ networkChecker.onDisconnect = () => {
     if (session.isAuthenticated && controlAutoLoginInput.checked) {
         // session.isAuthenticated = false;
 
-        showPage(pageConnecting);
+        showPage(pageAuthentication);
         networkChecker.stop();
         session.login({
             login: controlLogin.value,
             password: controlPassword.value,
         }).then(() => {
-            showPage(pageConnected);
+            showPage(pageAuthenticated);
         }).catch(e => {
             controlErrorDescription.innerHTML = e;
             showPage(pageError);
-            setTimeout(() => showPage(pageConnected), 3000); // todo: create specified page
+            setTimeout(() => showPage(pageAuthenticated), 3000); // todo: create specified page
         }).then(() => {
             setTimeout(() => {
                 networkChecker.start();
