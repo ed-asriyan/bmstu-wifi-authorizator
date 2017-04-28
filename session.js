@@ -5,6 +5,7 @@
 'use strict';
 
 // todo: integrate the logger
+const remote = require('electron').remote;
 const fetch = require('node-fetch');
 const named = require('named-regexp').named;
 
@@ -100,7 +101,9 @@ class Session {
             }
         }
 
-        return new Promise(resolve => resolve('name="logout_id" type="hidden" value="frf" You have been disconnected'));
+        if (~remote.getGlobal('argv').indexOf('--fake-login')) // if (index !== -1)
+            return new Promise(resolve =>
+                resolve('name="logout_id" type="hidden" value="frf" You have been disconnected'));
         return fetch(url, initPromise)
             .then(response => response.text());
     }
