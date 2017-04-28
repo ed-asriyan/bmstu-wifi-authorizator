@@ -11,13 +11,11 @@ class NetworkChecker {
         this._timeout = options.timeout || 6000;
         this._interval = options.interval || 5000;
         this._url = options.url || 'https://google.com';
-        this._isConnected = false;
-        this._isChecking = false;
-        this._runningId = 0;
+        this.stop();
     }
 
     start() {
-        this._runningId = Math.random() + 1;
+        this._runningId = Math.random() * 1000 * Math.random() + 1;
 
         let _;
         _ = function () {
@@ -41,6 +39,8 @@ class NetworkChecker {
     }
 
     stop() {
+        this._isConnected = undefined;
+        this._isChecking = undefined;
         this._runningId = 0;
     }
 

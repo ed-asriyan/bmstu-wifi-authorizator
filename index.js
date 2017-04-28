@@ -73,10 +73,14 @@ const loadState = function () {
 };
 
 const updateConnectionIndicator = function () {
-    if (networkChecker.isConnected) {
+    if (!networkChecker.isRunning) {
+        controlInternetIndicator.style.color = '#000000';
+        controlInternetIndicator.title = undefined;
+    } else if (networkChecker.isConnected) {
         controlInternetIndicator.style.color = '#28a900';
         controlInternetIndicator.title = 'Network access';
-    } else {
+    }
+    else {
         if (networkChecker.isChecking) {
             controlInternetIndicator.style.color = '#ccb900';
             controlInternetIndicator.title = 'Trying to connect';
@@ -92,6 +96,7 @@ const updateConnectionIndicator = function () {
  */
 const onLoginClick = function () {
     showPage(pageConnecting);
+    networkChecker.stop();
     session.login({
         login: controlLogin.value,
         password: controlPassword.value,
@@ -101,17 +106,26 @@ const onLoginClick = function () {
         controlErrorDescription.innerHTML = e;
         showPage(pageError);
         setTimeout(() => showPage(pageLogin), 3000);
+    }).then(() => {
+        setTimeout(() => {
+            networkChecker.start();
+        }, 2000);
     });
 };
 
 const onLogoutClick = function () {
     showPage(pageDisconnecting);
+    networkChecker.stop();
     session.logout().then(() => {
         showPage(pageLogin);
     }).catch(e => {
         controlErrorDescription.innerHTML = e;
         showPage(pageError);
         setTimeout(() => showPage(pageConnected), 3000);
+    }).then(() => {
+        setTimeout(() => {
+            networkChecker.start();
+        }, 2000);
     });
 };
 
@@ -131,7 +145,29 @@ try {
 showPage(pageLogin);
 
 networkChecker.onConnect = updateConnectionIndicator;
-networkChecker.onDisconnect = updateConnectionIndicator;
+networkChecker.onDisconnect = () => {
+    updateConnectionIndicator();
+    if (session.isAuthenticated && controlAutoLoginInput.checked) {
+        // session.isAuthenticated = false;
+
+        showPage(pageConnecting);
+        networkChecker.stop();
+        session.login({
+            login: controlLogin.value,
+            password: controlPassword.value,
+        }).then(() => {
+            showPage(pageConnected);
+        }).catch(e => {
+            controlErrorDescription.innerHTML = e;
+            showPage(pageError);
+            setTimeout(() => showPage(pageConnected), 3000); // todo: create specified page
+        }).then(() => {
+            setTimeout(() => {
+                networkChecker.start();
+            }, 2000);
+        });
+    }
+};
 networkChecker.onCheckingBegin = updateConnectionIndicator;
 networkChecker.onCheckingEnd = updateConnectionIndicator;
 networkChecker.start();
