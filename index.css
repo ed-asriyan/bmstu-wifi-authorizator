@@ -1,0 +1,16 @@
+.page_icon {
+    font-size: 55pt;
+    margin-bottom: 5px;
+}
+
+.page_caption {
+    font-weight: bolder;
+}
+
+.page_input {
+    text-align: center;
+}
+
+.page_btn {
+    height: 40px;
+}
