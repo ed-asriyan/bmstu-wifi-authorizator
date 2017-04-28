@@ -23,7 +23,7 @@ const pageAuthentication = document.getElementById('page_authentication');
 const pageAuthenticated = document.getElementById('page_authenticated');
 const pageAuthenticationError = document.getElementById('page_authentication_error');
 const pageDisconnecting = document.getElementById('page_disconnecting');
-const pageError = document.getElementById('page_error');
+const pageDisconnectingError = document.getElementById('page_disconnecting_error');
 
 const pages = document.getElementById('pages').childNodes;
 
@@ -32,7 +32,6 @@ const pages = document.getElementById('pages').childNodes;
  */
 const controlLogin = document.getElementById('page_login_username_input');
 const controlPassword = document.getElementById('page_login_password_input');
-const controlErrorDescription = document.getElementById('page_error_description');
 const controlRememberInput = document.getElementById('form_login_remember_input');
 const controlAutoLoginInput = document.getElementById('page_connected_autologin_input');
 const controlInternetIndicator = document.getElementById('internet_indicator');
@@ -94,44 +93,59 @@ const updateConnectionIndicator = function () {
     }
 };
 
+const startNetworkChecking = function () {
+    stopNetworkChecking();
+    setTimeout(() => {
+        networkChecker.start();
+    }, 2000);
+};
+
+const stopNetworkChecking = function () {
+    networkChecker.stop();
+};
+
 /**
  * Routed events
  */
 const onLoginClick = function () {
+    stopNetworkChecking();
     showPage(pageAuthentication);
-    networkChecker.stop();
     session.login({
         login: controlLogin.value,
         password: controlPassword.value,
     }).then(() => {
         showPage(pageAuthenticated);
+        startNetworkChecking();
     }).catch(e => {
         showPage(pageAuthenticationError);
-    }).then(() => {
-        setTimeout(() => {
-            networkChecker.start();
-        }, 2000);
-    });
+    })
 };
 
 const onLogoutClick = function () {
+    stopNetworkChecking();
     showPage(pageDisconnecting);
-    networkChecker.stop();
     session.logout().then(() => {
         showPage(pageAuthenticate);
+        startNetworkChecking();
     }).catch(e => {
-        controlErrorDescription.innerHTML = e;
-        showPage(pageError);
-        setTimeout(() => showPage(pageAuthenticated), 3000);
-    }).then(() => {
-        setTimeout(() => {
-            networkChecker.start();
-        }, 2000);
+        showPage(pageDisconnectingError);
     });
 };
 
-const onAuthentionErrorSubmitClick = function () {
+const onAuthenticationErrorSubmitClick = function () {
     showPage(pageAuthenticate);
+    startNetworkChecking();
+};
+
+const onDisconnecingErrorForceLogoutClick = function () {
+    session.isAuthenticated = false;
+    showPage(pageAuthenticate);
+    startNetworkChecking();
+};
+
+const onDisconnecingErrorGoBackClick = function () {
+    showPage(pageAuthenticated);
+    startNetworkChecking();
 };
 
 /**
@@ -153,23 +167,17 @@ networkChecker.onConnect = updateConnectionIndicator;
 networkChecker.onDisconnect = () => {
     updateConnectionIndicator();
     if (session.isAuthenticated && controlAutoLoginInput.checked) {
-        // session.isAuthenticated = false;
-
+        stopNetworkChecking();
         showPage(pageAuthentication);
-        networkChecker.stop();
         session.login({
             login: controlLogin.value,
             password: controlPassword.value,
         }).then(() => {
             showPage(pageAuthenticated);
+            startNetworkChecking();
         }).catch(e => {
-            controlErrorDescription.innerHTML = e;
-            showPage(pageError);
-            setTimeout(() => showPage(pageAuthenticated), 3000); // todo: create specified page
-        }).then(() => {
-            setTimeout(() => {
-                networkChecker.start();
-            }, 2000);
+            showPage(pageAuthenticated); // todo: create specified page
+            startNetworkChecking();
         });
     }
 };
