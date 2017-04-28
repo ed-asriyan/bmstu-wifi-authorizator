@@ -21,6 +21,7 @@ const networkChecker = new NetworkChecker();
 const pageAuthenticate = document.getElementById('page_authenticate');
 const pageAuthentication = document.getElementById('page_authentication');
 const pageAuthenticated = document.getElementById('page_authenticated');
+const pageAuthenticationError = document.getElementById('page_authentication_error');
 const pageDisconnecting = document.getElementById('page_disconnecting');
 const pageError = document.getElementById('page_error');
 
@@ -45,7 +46,7 @@ const showPage = function (page) {
 };
 
 const saveState = function () {
-    if (~remote.getGlobal('argv').indexOf('--fake-login'))return; // if (index !== -1)
+    // if (~remote.getGlobal('argv').indexOf('--fake-login'))return; // if (index !== -1)
 
     let saveObj = {
         logoutId: session.logoutId,
@@ -105,9 +106,7 @@ const onLoginClick = function () {
     }).then(() => {
         showPage(pageAuthenticated);
     }).catch(e => {
-        controlErrorDescription.innerHTML = e;
-        showPage(pageError);
-        setTimeout(() => showPage(pageAuthenticate), 3000);
+        showPage(pageAuthenticationError);
     }).then(() => {
         setTimeout(() => {
             networkChecker.start();
@@ -129,6 +128,10 @@ const onLogoutClick = function () {
             networkChecker.start();
         }, 2000);
     });
+};
+
+const onAuthentionErrorSubmitClick = function () {
+    showPage(pageAuthenticate);
 };
 
 /**
