@@ -20,6 +20,7 @@ const networkChecker = new NetworkChecker();
  */
 const pageAuthenticate = document.getElementById('page_authenticate');
 const pageAuthentication = document.getElementById('page_authentication');
+const pageAuthenticationLoop = document.getElementById('page_authentication_loop');
 const pageAuthenticated = document.getElementById('page_authenticated');
 const pageAuthenticationError = document.getElementById('page_authentication_error');
 const pageDisconnecting = document.getElementById('page_disconnecting');
@@ -132,7 +133,16 @@ const onLogoutClick = function () {
     });
 };
 
-const onAuthenticationErrorSubmitClick = function () {
+const onAuthenticationErrorLoopedClick = function () {
+  showPage(pageAuthenticationLoop);
+};
+
+const onAuthenticationLoopCancelClick = function () {
+    showPage(pageAuthenticate);
+    startNetworkChecking();
+};
+
+const onAuthenticationErrorGoBackClick = function () {
     showPage(pageAuthenticate);
     startNetworkChecking();
 };
@@ -176,8 +186,7 @@ networkChecker.onDisconnect = () => {
             showPage(pageAuthenticated);
             startNetworkChecking();
         }).catch(e => {
-            showPage(pageAuthenticated); // todo: create specified page
-            startNetworkChecking();
+            showPage(pageAuthenticationLoop);
         });
     }
 };

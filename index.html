@@ -43,6 +43,17 @@
                 <p class="page_caption">Connecting...</p>
             </div>
 
+            <div id="page_authentication_loop" align="middle">
+                <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
+                <p class="page_caption">Please wait for Wi-Fi timeout...</p>
+                <div id="page_authentication_loop_cancel_group" class="form-group">
+                    <button id="page_authentication_loop_cancel_button"
+                            class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                            type="submit" onclick="onAuthenticationLoopCancelClick()">Cancel
+                    </button>
+                </div>
+            </div>
+
             <div id="page_authenticated" align="middle">
                 <i class=" page_icon page_icon fa fa-globe"></i>
                 <p class="page_caption">You're connected to the Internet</p>
@@ -61,12 +72,19 @@
                 </div>
             </div>
 
-            <div id="page_authentication_error" align="middle">
+            <div id="page_authentication_error" class="form-horizontal" align="middle">
                 <i class="page_icon fa fa-times" aria-hidden="true"></i>
                 <p class="page_caption">Can not authenticate</p>
-                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onAuthenticationErrorSubmitClick()">Go to login page
-                </button>
+                <div class="form-group">
+                    <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                            type="submit" onclick="onAuthenticationErrorLoopedClick()">Wait for Wi-Fi timeout
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                            type="submit" onclick="onAuthenticationErrorGoBackClick()">Go back
+                    </button>
+                </div>
             </div>
 
             <div id="page_disconnecting" align="middle">

@@ -16,6 +16,8 @@ class Session {
 
     login(options) {
         options = options || {};
+
+        this._logoutId = undefined;
         if (options.logoutId) {
             return new Promise(function (resolve) {
                 this._logoutId = options.logoutId;
