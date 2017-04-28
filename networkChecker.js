@@ -16,10 +16,10 @@ class NetworkChecker {
 
     start() {
         this._runningId = Math.random() * 1000 * Math.random() + 1;
+        let selfRunningId = this._runningId;
 
         let _;
         _ = function () {
-            let selfRunningId = this._runningId;
             this._setCheckingState(true);
             fetch(this._url, {
                 timeout: this._timeout
@@ -28,7 +28,7 @@ class NetworkChecker {
                 .catch(() => false)
                 .then(function (checkResult) {
                     if (this._runningId === selfRunningId) {
-                        process.stdout.write(checkResult.toString());
+                        process.stdout.write(`${checkResult.toString()} ${this._runningId} ${selfRunningId} \n`);
                         this._setCheckingState(false);
                         this._setConnectionState(checkResult);
                         setTimeout(_, this._interval);
