@@ -26,7 +26,10 @@ const pageAuthenticationError = document.getElementById('page_authentication_err
 const pageDisconnecting = document.getElementById('page_disconnecting');
 const pageDisconnectingError = document.getElementById('page_disconnecting_error');
 
-const pages = document.getElementById('pages').childNodes;
+const about = document.getElementById('about');
+const pages = document.getElementById('pages');
+
+const pageList = pages.childNodes;
 
 /**
  * Controls
@@ -41,8 +44,13 @@ const controlInternetIndicator = document.getElementById('internet_indicator');
  * Manage functions
  */
 const showPage = function (page) {
-    pages.forEach(page => page.hidden = true);
+    pageList.forEach(page => page.hidden = true);
     page.hidden = false;
+};
+
+const setAboutVisibility = function (visible) {
+    about.hidden = !visible;
+    pages.hidden = visible;
 };
 
 const saveState = function () {
@@ -134,7 +142,7 @@ const onLogoutClick = function () {
 };
 
 const onAuthenticationErrorLoopedClick = function () {
-  showPage(pageAuthenticationLoop);
+    showPage(pageAuthenticationLoop);
 };
 
 const onAuthenticationLoopCancelClick = function () {
@@ -158,6 +166,10 @@ const onDisconnecingErrorGoBackClick = function () {
     startNetworkChecking();
 };
 
+const onAboutIndicatorClick = function () {
+    setAboutVisibility(about.hidden);
+};
+
 /**
  * Logic
  */
@@ -171,6 +183,7 @@ try {
 }
 
 
+setAboutVisibility(false);
 showPage(pageAuthenticate);
 
 networkChecker.onConnect = updateConnectionIndicator;

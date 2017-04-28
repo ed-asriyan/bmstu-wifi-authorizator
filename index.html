@@ -12,106 +12,125 @@
 <body>
 <script src="index.js" defer></script>
 
-<div class="container" style="padding-left: 20px; padding-top: 20px; padding-right: 20px;">
+<div class="container" style="padding-left: 20px;">
     <div class="row">
-        <div id="pages" class="col-xs-10 col-xs-offset-1">
-            <div id="page_authenticate" class="form-horizontal">
-                <div id="page_login_username_group" class="form-group">
-                    <input id="page_login_username_input" class="page_input form-control" type="text"
-                           placeholder="Login">
-                </div>
-                <div id="form_login_password_group" class="form-group">
-                    <input id="page_login_password_input" class="page_input form-control" type="password"
-                           placeholder="Password">
-                </div>
-                <div id="form_login_remember_group" class="form-group" align="middle">
-                    <div class="checkbox">
-                        <label>
-                            <input id="form_login_remember_input" type="checkbox" checked>Remember credentials
-                        </label>
-                    </div>
-                </div>
-                <div id="page_login_submit_group" class="form-group">
-                    <button id="page_login_submit_button" class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                            type="submit" onclick="onLoginClick()">Sign in
-                    </button>
-                </div>
+        <div id="about" align="middle" style="overflow-y: scroll; overflow-x: hidden; height: 214px;">
+            <h3>BMSTU Wi-Fi Authorizator</h3>
+            <hr>
+            <h4>Links</h4>
+            <div class="row">
+                <a class="col-xs-6" href="https://github.com/ed-asriyan/bmstu-wifi-authorizator">GitHub</a>
+                <a class="col-xs-6" href="https://vk.com/id84279691">VK</a>
             </div>
-
-            <div id="page_authentication" align="middle">
-                <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
-                <p class="page_caption">Connecting...</p>
-            </div>
-
-            <div id="page_authentication_loop" align="middle">
-                <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
-                <p class="page_caption">Please wait for Wi-Fi timeout...</p>
-                <div id="page_authentication_loop_cancel_group" class="form-group">
-                    <button id="page_authentication_loop_cancel_button"
-                            class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                            type="submit" onclick="onAuthenticationLoopCancelClick()">Cancel
-                    </button>
-                </div>
-            </div>
-
-            <div id="page_authenticated" align="middle">
-                <i class=" page_icon page_icon fa fa-globe"></i>
-                <p class="page_caption">You're connected to the Internet</p>
-                <div id="page_connected_autologin_group" class="form-group" align="middle">
-                    <div class="checkbox">
-                        <label>
-                            <input id="page_connected_autologin_input" type="checkbox" checked>Auto login when
-                            disconnect
-                        </label>
-                    </div>
-                </div>
-                <div id="page_connected_submit_group" class="form-group">
-                    <button id="page_connected_submit_button" class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                            type="submit" onclick="onLogoutClick()">Logout
-                    </button>
-                </div>
-            </div>
-
-            <div id="page_authentication_error" class="form-horizontal" align="middle">
-                <i class="page_icon fa fa-times" aria-hidden="true"></i>
-                <p class="page_caption">Can not authenticate</p>
-                <div class="form-group">
-                    <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                            type="submit" onclick="onAuthenticationErrorLoopedClick()">Wait for Wi-Fi timeout
-                    </button>
-                </div>
-                <div class="form-group">
-                    <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                            type="submit" onclick="onAuthenticationErrorGoBackClick()">Go back
-                    </button>
-                </div>
-            </div>
-
-            <div id="page_disconnecting" align="middle">
-                <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
-                <p class="page_caption">Disconnecting...</p>
-            </div>
-
-            <div id="page_disconnecting_error" align="middle">
-                <i class="page_icon fa fa-times" aria-hidden="true"></i>
-                <p class="page_caption">Can not logout</p>
-                <button class="page_btn col-xs-offset-1 col-xs-4 btn btn-default"
-                        type="submit" onclick="onDisconnecingErrorForceLogoutClick()">Force
-                </button>
-                <button class="page_btn col-xs-offset-2 col-xs-4 btn btn-default"
-                        type="submit" onclick="onDisconnecingErrorGoBackClick()">Go back
-                </button>
-            </div>
-
-            <div id="page_error">
-                <p class="page_caption" id="page_error_description"></p>
+            <hr>
+            <h4>Powered by</h4>
+            <div class="row">
+                <a class="col-xs-4" href="https://electron.atom.io/">Electron</a>
+                <a class="col-xs-4" href="http://fontawesome.io/">Font Awesome</a>
+                <a class="col-xs-4" href="https://getbootstrap.com/">Bootstrap</a>
             </div>
         </div>
     </div>
-    <div class="row">
-        <i id="internet_indicator" class="fa fa-globe"
-           style="font-size: large;position: fixed; bottom: 2px; left: 3px"></i>
+    <div id="pages" class="col-xs-10 col-xs-offset-1" style="padding-top: 20px; padding-right: 20px;">
+        <div id="page_authenticate" class="form-horizontal">
+            <div id="page_login_username_group" class="form-group">
+                <input id="page_login_username_input" class="page_input form-control" type="text"
+                       placeholder="Login">
+            </div>
+            <div id="form_login_password_group" class="form-group">
+                <input id="page_login_password_input" class="page_input form-control" type="password"
+                       placeholder="Password">
+            </div>
+            <div id="form_login_remember_group" class="form-group" align="middle">
+                <div class="checkbox">
+                    <label>
+                        <input id="form_login_remember_input" type="checkbox" checked>Remember credentials
+                    </label>
+                </div>
+            </div>
+            <div id="page_login_submit_group" class="form-group">
+                <button id="page_login_submit_button" class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        type="submit" onclick="onLoginClick()">Sign in
+                </button>
+            </div>
+        </div>
+
+        <div id="page_authentication" align="middle">
+            <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
+            <p class="page_caption">Connecting...</p>
+        </div>
+
+        <div id="page_authentication_loop" align="middle">
+            <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
+            <p class="page_caption">Please wait for Wi-Fi timeout...</p>
+            <div id="page_authentication_loop_cancel_group" class="form-group">
+                <button id="page_authentication_loop_cancel_button"
+                        class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        type="submit" onclick="onAuthenticationLoopCancelClick()">Cancel
+                </button>
+            </div>
+        </div>
+
+        <div id="page_authenticated" align="middle">
+            <i class=" page_icon page_icon fa fa-globe"></i>
+            <p class="page_caption">You're connected to the Internet</p>
+            <div id="page_connected_autologin_group" class="form-group" align="middle">
+                <div class="checkbox">
+                    <label>
+                        <input id="page_connected_autologin_input" type="checkbox" checked>Auto login when
+                        disconnect
+                    </label>
+                </div>
+            </div>
+            <div id="page_connected_submit_group" class="form-group">
+                <button id="page_connected_submit_button" class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        type="submit" onclick="onLogoutClick()">Logout
+                </button>
+            </div>
+        </div>
+
+        <div id="page_authentication_error" class="form-horizontal" align="middle">
+            <i class="page_icon fa fa-times" aria-hidden="true"></i>
+            <p class="page_caption">Can not authenticate</p>
+            <div class="form-group">
+                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        type="submit" onclick="onAuthenticationErrorLoopedClick()">Wait for Wi-Fi timeout
+                </button>
+            </div>
+            <div class="form-group">
+                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        type="submit" onclick="onAuthenticationErrorGoBackClick()">Go back
+                </button>
+            </div>
+        </div>
+
+        <div id="page_disconnecting" align="middle">
+            <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
+            <p class="page_caption">Disconnecting...</p>
+        </div>
+
+        <div id="page_disconnecting_error" align="middle">
+            <i class="page_icon fa fa-times" aria-hidden="true"></i>
+            <p class="page_caption">Can not logout</p>
+            <button class="page_btn col-xs-offset-1 col-xs-4 btn btn-default"
+                    type="submit" onclick="onDisconnecingErrorForceLogoutClick()">Force
+            </button>
+            <button class="page_btn col-xs-offset-2 col-xs-4 btn btn-default"
+                    type="submit" onclick="onDisconnecingErrorGoBackClick()">Go back
+            </button>
+        </div>
+
+        <div id="page_error">
+            <p class="page_caption" id="page_error_description"></p>
+        </div>
     </div>
+</div>
+<div class="row">
+    <i id="internet_indicator" class="fa fa-globe"
+       style="font-size: large;position: fixed; bottom: 2px; left: 3px"></i>
+    <i id="about_indicator" class="fa fa-info-circle" title="About"
+       style="font-size: large;position: fixed; bottom: 2px; right: 3px; cursor: hand; color: darkblue;"
+       onclick="onAboutIndicatorClick()"></i>
 </div>
 </body>
 </html>
