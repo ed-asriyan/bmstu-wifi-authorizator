@@ -13,15 +13,15 @@ class NetworkChecker {
         this._url = options.url || 'https://google.com';
         this._isConnected = false;
         this._isChecking = false;
-        this._isRunning = false;
+        this._runningId = 0;
     }
 
     start() {
-        if (this._isRunning) return;
-        this._isRunning = true;
+        this._runningId = Math.random() + 1;
 
         let _;
         _ = function () {
+            let selfRunningId = this._runningId;
             this._setCheckingState(true);
             fetch(this._url, {
                 timeout: this._timeout
@@ -29,7 +29,7 @@ class NetworkChecker {
                 .then(() => true)
                 .catch(() => false)
                 .then(function (checkResult) {
-                    if (this._isRunning) {
+                    if (this._runningId === selfRunningId) {
                         process.stdout.write(checkResult.toString());
                         this._setCheckingState(false);
                         this._setConnectionState(checkResult);
@@ -41,15 +41,24 @@ class NetworkChecker {
     }
 
     stop() {
-        this._isRunning = false;
+        this._runningId = 0;
     }
+
+    restart() {
+        this.start();
+    }
+
 
     get isRunning() {
-        return this._isRunning;
+        return this._runningId !== 0;
     }
 
-    set isRunning(value) {
-        value ? this.start() : this.stop();
+    get isConnected() {
+        return this._isConnected;
+    }
+
+    get isChecking() {
+        return this._isChecking;
     }
 
 
@@ -61,6 +70,7 @@ class NetworkChecker {
         this._timeout = value;
     }
 
+
     get interval() {
         return this._interval;
     }
@@ -69,13 +79,6 @@ class NetworkChecker {
         this._interval = value;
     }
 
-    get isConnected() {
-        return this._isConnected;
-    }
-
-    get isChecking() {
-        return this._isChecking;
-    }
 
     set onConnect(value) {
         this._onConnect = value;
@@ -111,6 +114,7 @@ class NetworkChecker {
     get onCheckingEnd() {
         return this._onCheckingEnd;
     }
+
 
     set onConnectionEnd(value) {
         this._onCheckingEnd = value;
