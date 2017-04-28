@@ -45,6 +45,8 @@ const showPage = function (page) {
 };
 
 const saveState = function () {
+    if (~remote.getGlobal('argv').indexOf('--fake-login'))return; // if (index !== -1)
+
     let saveObj = {
         logoutId: session.logoutId,
         saveCredentials: controlRememberInput.checked,
