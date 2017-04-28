@@ -9,10 +9,11 @@ let fetch = require('node-fetch');
 class NetworkChecker {
     constructor(options = {}) {
         this._timeout = options.timeout || 6000;
-        this._isConnected = options.isConnected || false;
+        this._interval = options.interval || 5000;
+        this._url = options.url || 'https://google.com';
+        this._isConnected = false;
         this._isChecking = false;
         this._isRunning = false;
-        this._url = options.url || 'https://google.com';
     }
 
     start() {
@@ -23,7 +24,7 @@ class NetworkChecker {
         _ = function () {
             this._setCheckingState(true);
             fetch(this._url, {
-                timeout: 5000
+                timeout: this._timeout
             })
                 .then(() => true)
                 .catch(() => false)
@@ -32,7 +33,7 @@ class NetworkChecker {
                         process.stdout.write(checkResult.toString());
                         this._setCheckingState(false);
                         this._setConnectionState(checkResult);
-                        setTimeout(_, this._timeout);
+                        setTimeout(_, this._interval);
                     }
                 }.bind(this));
         }.bind(this);
@@ -60,6 +61,13 @@ class NetworkChecker {
         this._timeout = value;
     }
 
+    get interval() {
+        return this._interval;
+    }
+
+    set interval(value) {
+        this._interval = value;
+    }
 
     get isConnected() {
         return this._isConnected;

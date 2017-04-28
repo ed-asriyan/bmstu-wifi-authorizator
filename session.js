@@ -9,8 +9,8 @@ const fetch = require('node-fetch');
 const named = require('named-regexp').named;
 
 class Session {
-    constructor() {
-
+    constructor(options = {}) {
+        this._timeout = options.timeout || 5000;
     }
 
     login(options) {
@@ -65,6 +65,14 @@ class Session {
         }.bind(this));
     }
 
+    get timeout() {
+        return this._timeout;
+    }
+
+    set timeout(value) {
+        this._timeout = value;
+    }
+
     get isAuthenticated() {
         return this._logoutId;
     }
@@ -76,7 +84,7 @@ class Session {
     _call(httpMethod, url, data) {
         const initPromise = {
             method: httpMethod,
-            timeout: 5000,
+            timeout: this._timeout,
         };
         if (httpMethod === 'POST') {
             if (data !== undefined) {
@@ -92,6 +100,7 @@ class Session {
             }
         }
 
+        return new Promise(resolve => resolve('name="logout_id" type="hidden" value="frf" You have been disconnected'));
         return fetch(url, initPromise)
             .then(response => response.text());
     }
