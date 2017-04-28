@@ -75,11 +75,14 @@ const loadState = function () {
 const updateConnectionIndicator = function () {
     if (networkChecker.isConnected) {
         controlInternetIndicator.style.color = '#28a900';
+        controlInternetIndicator.title = 'Network access';
     } else {
         if (networkChecker.isChecking) {
             controlInternetIndicator.style.color = '#ccb900';
+            controlInternetIndicator.title = 'Trying to connect';
         } else {
             controlInternetIndicator.style.color = '#a20c0f';
+            controlInternetIndicator.title = 'No internet access';
         }
     }
 };
