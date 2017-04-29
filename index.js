@@ -11,9 +11,11 @@ const remote = require('electron').remote;
 const fs = require('fs');
 const Session = require('./session');
 const NetworkChecker = require('./networkChecker');
+const WifiWaiter = require('./wifiWaiter');
 
 const session = new Session();
 const networkChecker = new NetworkChecker();
+const wifiWaiter = new WifiWaiter(session);
 
 /**
  * Pages
@@ -21,6 +23,7 @@ const networkChecker = new NetworkChecker();
 const pageAuthenticate = document.getElementById('page_authenticate');
 const pageAuthentication = document.getElementById('page_authentication');
 const pageAuthenticationLoop = document.getElementById('page_authentication_loop');
+const pageAuthenticationLoopIcon = document.getElementById('page_authentication_loop_icon');
 const pageAuthenticated = document.getElementById('page_authenticated');
 const pageAuthenticationError = document.getElementById('page_authentication_error');
 const pageDisconnecting = document.getElementById('page_disconnecting');
@@ -143,10 +146,23 @@ const onLogoutClick = function () {
 
 const onAuthenticationErrorLoopedClick = function () {
     showPage(pageAuthenticationLoop);
+    wifiWaiter.onLogin = function () {
+        showPage(pageAuthenticated);
+        startNetworkChecking();
+        wifiWaiter.stop();
+    };
+    wifiWaiter.onLoginBegin = function () {
+        pageAuthenticationLoopIcon.style.color = '#ccb900';
+    };
+    wifiWaiter.onLoginEnd = function () {
+        pageAuthenticationLoopIcon.style.color = '#000000';
+    };
+    wifiWaiter.start();
 };
 
 const onAuthenticationLoopCancelClick = function () {
     showPage(pageAuthenticate);
+    wifiWaiter.stop();
     startNetworkChecking();
 };
 
