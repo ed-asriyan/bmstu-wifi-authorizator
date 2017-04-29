@@ -4,6 +4,7 @@
 
 'use strict';
 
+const winston = require('winston');
 let fetch = require('node-fetch');
 
 class NetworkChecker {
@@ -29,7 +30,6 @@ class NetworkChecker {
                 .then(function (checkResult) {
                     this._setCheckingState(false);
                     if (this._runningId === selfRunningId) {
-                        process.stdout.write(`${checkResult.toString()} ${this._runningId} ${selfRunningId} \n`);
                         this._setConnectionState(checkResult);
                         setTimeout(_, this._interval);
                     }
@@ -128,10 +128,16 @@ class NetworkChecker {
     _setConnectionState(state) {
         if (state !== this._isConnected) {
             this._isConnected = state;
-            if (state && this._onConnect) {
-                this._onConnect();
-            } else if (!state && this._onDisconnect) {
-                this._onDisconnect();
+            if (state) {
+                winston.info('NetworkChecker', 'Connection established');
+                if (this._onConnect) {
+                    this._onConnect();
+                }
+            } else {
+                winston.info('NetworkChecker', 'Connection lost');
+                if (this._onDisconnect) {
+                    this._onDisconnect();
+                }
             }
         }
     }
@@ -139,10 +145,17 @@ class NetworkChecker {
     _setCheckingState(state) {
         if (state !== this._isChecking) {
             this._isChecking = state;
-            if (state && this._onCheckingBegin) {
-                this._onCheckingBegin();
-            } else if (!state && this._onCheckingEnd) {
-                this._onCheckingEnd();
+            if (state) {
+                // wtf?? is uncomment fetch timeout will occurring
+                // winston.info('NetworkChecker', 'Checking begin');
+                if (this._onCheckingBegin) {
+                    this._onCheckingBegin();
+                }
+            } else {
+                winston.info('NetworkChecker', 'Checking end');
+                if (this._onCheckingEnd) {
+                    this._onCheckingEnd();
+                }
             }
         }
     }

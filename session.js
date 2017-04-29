@@ -4,7 +4,7 @@
 
 'use strict';
 
-// todo: integrate the logger
+const winston = require('winston');
 const remote = require('electron').remote;
 const fetch = require('node-fetch');
 const named = require('named-regexp').named;
@@ -29,22 +29,25 @@ class Session {
 
             const URL = 'https://lbpfs.bmstu.ru:8003/index.php?zone=bmstu_lb';
 
+            winston.info('Session', 'Login begin');
             return this._call('POST', URL, {
                 'auth_user': login,
                 'auth_pass': password,
                 'accept': 'Continue',
             }).then((function (response) {
-                process.stdout.write(response);
+                winston.info('Session', 'Login end', response);
                 let regex = named(/name="logout_id" +type="hidden" +value="(:<logout_id>\w+)"/);
                 let matched = regex.exec(response);
                 if (matched) {
                     this._logoutId = matched.capture('logout_id');
-                    process.stdout.write(this._logoutId);
                 } else {
                     // todo: create exception class
                     throw "Can not login";
                 }
-            }).bind(this));
+            }).bind(this)).catch(e => {
+                winston.error('Session', 'Login error', e);
+                throw e;
+            });
         }
     }
 
@@ -56,16 +59,21 @@ class Session {
 
         const URL = 'https://lbpfs.bmstu.ru:8003/';
 
+        winston.info('Session', 'Logout begin');
         return this._call('POST', URL, {
             'logout_id': this._logoutId,
             'zone': 'bmstu_lb',
         }).then(function (response) {
+            winston.info('Session', 'Logout end', response);
             if (response.indexOf('You have been disconnected') < 0) {
                 // todo: create exception class
                 throw "Can not logout";
             }
             delete this._logoutId;
-        }.bind(this));
+        }.bind(this)).catch(e => {
+            winston.error('Session', 'Logout error', e);
+            throw e;
+        });
     }
 
     get timeout() {
