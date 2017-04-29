@@ -27,9 +27,9 @@ class NetworkChecker {
                 .then(() => true)
                 .catch(() => false)
                 .then(function (checkResult) {
+                    this._setCheckingState(false);
                     if (this._runningId === selfRunningId) {
                         process.stdout.write(`${checkResult.toString()} ${this._runningId} ${selfRunningId} \n`);
-                        this._setCheckingState(false);
                         this._setConnectionState(checkResult);
                         setTimeout(_, this._interval);
                     }
