@@ -61,7 +61,7 @@
         </div>
 
         <div id="page_authentication_loop" align="middle">
-            <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
+            <i class="page_icon fa fa-wifi"></i>
             <p class="page_caption">Please wait for Wi-Fi timeout...</p>
             <div id="page_authentication_loop_cancel_group" class="form-group">
                 <button id="page_authentication_loop_cancel_button"
@@ -72,7 +72,7 @@
         </div>
 
         <div id="page_authenticated" align="middle">
-            <i class=" page_icon page_icon fa fa-globe"></i>
+            <i class=" page_icon fa fa-globe"></i>
             <p class="page_caption">You're connected to the Internet</p>
             <div id="page_connected_autologin_group" class="form-group" align="middle">
                 <div class="checkbox">
@@ -109,15 +109,19 @@
             <p class="page_caption">Disconnecting...</p>
         </div>
 
-        <div id="page_disconnecting_error" align="middle">
+        <div id="page_disconnecting_error" class="form-horizontal" align="middle">
             <i class="page_icon fa fa-times" aria-hidden="true"></i>
             <p class="page_caption">Can not logout</p>
-            <button class="page_btn col-xs-offset-1 col-xs-4 btn btn-default"
-                    type="submit" onclick="onDisconnecingErrorForceLogoutClick()">Force
-            </button>
-            <button class="page_btn col-xs-offset-2 col-xs-4 btn btn-default"
-                    type="submit" onclick="onDisconnecingErrorGoBackClick()">Go back
-            </button>
+            <div class="form-group">
+                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default" title="Forget authenticating data"
+                        type="submit" onclick="onDisconnecingErrorForceLogoutClick()">Force
+                </button>
+            </div>
+            <div class="form-group">
+                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        type="submit" onclick="onDisconnecingErrorGoBackClick()">Go back
+                </button>
+            </div>
         </div>
 
         <div id="page_error">
