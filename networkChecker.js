@@ -40,7 +40,7 @@ class NetworkChecker {
 
     stop() {
         this._isConnected = undefined;
-        this._isChecking = undefined;
+        this._isLogingIn = undefined;
         this._runningId = 0;
     }
 
@@ -58,7 +58,7 @@ class NetworkChecker {
     }
 
     get isChecking() {
-        return this._isChecking;
+        return this._isLogingIn;
     }
 
 
@@ -143,8 +143,8 @@ class NetworkChecker {
     }
 
     _setCheckingState(state) {
-        if (state !== this._isChecking) {
-            this._isChecking = state;
+        if (state !== this._isLogingIn) {
+            this._isLogingIn = state;
             if (state) {
                 // wtf?? is uncomment fetch timeout will occurring
                 // winston.info('NetworkChecker', 'Checking begin');

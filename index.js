@@ -11,21 +11,18 @@ const remote = require('electron').remote;
 const fs = require('fs');
 const Session = require('./session');
 const NetworkChecker = require('./networkChecker');
-const WifiWaiter = require('./wifiWaiter');
+const LoginWaiter = require('./loginWaiter');
 
 const session = new Session();
 const networkChecker = new NetworkChecker();
-const wifiWaiter = new WifiWaiter(session);
+const loginWaiter = new LoginWaiter(session);
 
 /**
  * Pages
  */
 const pageAuthenticate = document.getElementById('page_authenticate');
-const pageAuthentication = document.getElementById('page_authentication');
-const pageAuthenticationLoop = document.getElementById('page_authentication_loop');
-const pageAuthenticationLoopIcon = document.getElementById('page_authentication_loop_icon');
+const pageAuthenticating = document.getElementById('page_authenticating');
 const pageAuthenticated = document.getElementById('page_authenticated');
-const pageAuthenticationError = document.getElementById('page_authentication_error');
 const pageDisconnecting = document.getElementById('page_disconnecting');
 const pageDisconnectingError = document.getElementById('page_disconnecting_error');
 
@@ -42,6 +39,8 @@ const controlPassword = document.getElementById('page_login_password_input');
 const controlRememberInput = document.getElementById('form_login_remember_input');
 const controlAutoLoginInput = document.getElementById('page_connected_autologin_input');
 const controlInternetIndicator = document.getElementById('internet_indicator');
+const controlAuthenticationLoopCaption = document.getElementById('page_authenticating_caption');
+const controlAuthenticationLoopIcon = document.getElementById('page_authentication_loop_icon');
 
 /**
  * Manage functions
@@ -57,33 +56,40 @@ const setAboutVisibility = function (visible) {
 };
 
 const saveState = function () {
-    // if (~remote.getGlobal('argv').indexOf('--fake-login'))return; // if (index !== -1)
+    return new Promise(resolve => {
+        let saveObj = {
+            logoutId: session.logoutId,
+            saveCredentials: controlRememberInput.checked,
+            autoLogin: controlAutoLoginInput.checked,
+        };
+        if (controlRememberInput.checked) {
+            saveObj.login = controlLogin.value;
+            saveObj.password = controlPassword.value;
+        }
 
-    let saveObj = {
-        logoutId: session.logoutId,
-        saveCredentials: controlRememberInput.checked,
-        autoLogin: controlAutoLoginInput.checked,
-    };
-    if (controlRememberInput.checked) {
-        saveObj.login = controlLogin.value;
-        saveObj.password = controlPassword.value;
-    }
-
-    fs.writeFileSync('bmstu-wifi-authorizator.save', JSON.stringify(saveObj));
+        fs.writeFileSync('bmstu-wifi-authorizator.save', JSON.stringify(saveObj));
+        resolve();
+    }).catch(function () {
+    });
 };
 
 const loadState = function () {
-    let saveObj = JSON.parse(fs.readFileSync('bmstu-wifi-authorizator.save'));
+    return new Promise(resolve => {
+        let saveObj = JSON.parse(fs.readFileSync('bmstu-wifi-authorizator.save'));
 
-    controlLogin.value = saveObj.login || '';
-    controlPassword.value = saveObj.password || '';
-    controlRememberInput.checked = saveObj.saveCredentials;
-    controlAutoLoginInput.checked = saveObj.autoLogin;
-    if (saveObj.logoutId) {
-        session.login({
-            logoutId: saveObj.logoutId
-        }).then(() => showPage(pageAuthenticated));
-    }
+        controlLogin.value = saveObj.login || '';
+        controlPassword.value = saveObj.password || '';
+        controlRememberInput.checked = saveObj.saveCredentials;
+        controlAutoLoginInput.checked = saveObj.autoLogin;
+        if (saveObj.logoutId) {
+            resolve(session.login({
+                logoutId: saveObj.logoutId
+            }));
+        } else {
+            resolve();
+        }
+    }).catch(function () {
+    });
 };
 
 const updateConnectionIndicator = function () {
@@ -117,69 +123,84 @@ const stopNetworkChecking = function () {
 };
 
 /**
- * Routed events
+ * Go to
  */
-const onLoginClick = function () {
-    stopNetworkChecking();
-    showPage(pageAuthentication);
-    session.login({
-        login: controlLogin.value,
-        password: controlPassword.value,
-    }).then(() => {
-        showPage(pageAuthenticated);
-        startNetworkChecking();
-    }).catch(e => {
-        showPage(pageAuthenticationError);
-    })
+const goToAuthenticate = function () {
+    session.isAuthenticated = false;
+    loginWaiter.stop();
+    startNetworkChecking();
+    showPage(pageAuthenticate);
 };
 
-const onLogoutClick = function () {
+const goToAuthenticatingLoop = function () {
+    loginWaiter.stop();
+    stopNetworkChecking();
+    showPage(pageAuthenticating);
+    controlAuthenticationLoopCaption.innerHTML = 'Logging in...';
+    loginWaiter.onLogin = function () {
+        goToAuthenticated();
+    };
+    loginWaiter.onLoginBegin = function () {
+        controlAuthenticationLoopIcon.style.color = '#ccb900';
+    };
+    loginWaiter.onLoginEnd = function () {
+        controlAuthenticationLoopIcon.style.color = '#000000';
+        controlAuthenticationLoopCaption.innerHTML = 'Waiting for Wi-Fi timeout...';
+    };
+    loginWaiter.start(
+        controlLogin.value,
+        controlPassword.value
+    );
+};
+
+const goToAuthenticated = function () {
+    loginWaiter.stop();
+    startNetworkChecking();
+    showPage(pageAuthenticated);
+};
+
+const goToDisconnecting = function () {
+    loginWaiter.stop();
     stopNetworkChecking();
     showPage(pageDisconnecting);
     session.logout().then(() => {
-        showPage(pageAuthenticate);
-        startNetworkChecking();
-    }).catch(e => {
-        showPage(pageDisconnectingError);
-    });
+        goToAuthenticate();
+    }).catch(() => {
+        goToDisconnectingError();
+    })
 };
 
-const onAuthenticationErrorLoopedClick = function () {
-    showPage(pageAuthenticationLoop);
-    wifiWaiter.onLogin = function () {
-        showPage(pageAuthenticated);
-        startNetworkChecking();
-        wifiWaiter.stop();
-    };
-    wifiWaiter.onLoginBegin = function () {
-        pageAuthenticationLoopIcon.style.color = '#ccb900';
-    };
-    wifiWaiter.onLoginEnd = function () {
-        pageAuthenticationLoopIcon.style.color = '#000000';
-    };
-    wifiWaiter.start();
+const goToDisconnectingError = function () {
+    loginWaiter.stop();
+    stopNetworkChecking();
+    showPage(pageDisconnectingError);
+};
+
+/**
+ * Routed events
+ */
+const onLoginClick = function () {
+    goToAuthenticatingLoop();
+};
+
+const onLogoutClick = function () {
+    goToDisconnecting();
 };
 
 const onAuthenticationLoopCancelClick = function () {
-    showPage(pageAuthenticate);
-    wifiWaiter.stop();
-    startNetworkChecking();
+    goToAuthenticate();
 };
 
-const onAuthenticationErrorGoBackClick = function () {
-    showPage(pageAuthenticate);
-    startNetworkChecking();
+const onLogoutErrorBackClick = function () {
+    goToAuthenticated();
 };
 
-const onDisconnecingErrorForceLogoutClick = function () {
-    session.isAuthenticated = false;
-    showPage(pageAuthenticate);
-    startNetworkChecking();
+const onLogoutErrorTryAgainClick = function () {
+    goToDisconnecting();
 };
 
-const onDisconnecingErrorGoBackClick = function () {
-    showPage(pageAuthenticated);
-    startNetworkChecking();
+const onLogoutErrorForceClick = function () {
+    goToAuthenticate();
 };
 
 const onAboutIndicatorClick = function () {
@@ -193,10 +214,13 @@ remote.getCurrentWindow().on('close', () => {
     saveState();
 });
 
-try {
-    loadState();
-} catch (e) {
-}
+loadState().then(() => {
+    if (session.isAuthenticated) {
+        goToAuthenticated();
+    } else {
+        goToAuthenticate();
+    }
+});
 
 
 setAboutVisibility(false);
@@ -205,18 +229,8 @@ showPage(pageAuthenticate);
 networkChecker.onConnect = updateConnectionIndicator;
 networkChecker.onDisconnect = () => {
     updateConnectionIndicator();
-    if (session.isAuthenticated && controlAutoLoginInput.checked) {
-        stopNetworkChecking();
-        showPage(pageAuthentication);
-        session.login({
-            login: controlLogin.value,
-            password: controlPassword.value,
-        }).then(() => {
-            showPage(pageAuthenticated);
-            startNetworkChecking();
-        }).catch(e => {
-            showPage(pageAuthenticationLoop);
-        });
+    if (!pageAuthenticated.hidden && session.isAuthenticated && controlAutoLoginInput.checked) {
+        goToAuthenticatingLoop();
     }
 };
 networkChecker.onCheckingBegin = updateConnectionIndicator;

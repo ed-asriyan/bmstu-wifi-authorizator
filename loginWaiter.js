@@ -4,7 +4,7 @@
 
 'use strict';
 
-class WifiWaiter {
+class LoginWaiter {
     constructor(session, options = {}) {
         this._session = session;
         this._interval = options.interval || 5000;
@@ -17,7 +17,7 @@ class WifiWaiter {
 
         let _;
         _ = function () {
-            this._setCheckingState(true);
+            this._setLoginState(true);
             this._session.login({
                 login: login,
                 password: password,
@@ -25,7 +25,7 @@ class WifiWaiter {
                 .then(() => true)
                 .catch(() => false)
                 .then(function (checkResult) {
-                    this._setCheckingState(false);
+                    this._setLoginState(false);
                     if (this._runningId === selfRunningId) {
                         if (checkResult) {
                             if (this._onLogin) {
@@ -41,7 +41,7 @@ class WifiWaiter {
     }
 
     stop() {
-        this._isChecking = undefined;
+        this._isLogingIn = undefined;
         this._runningId = 0;
     }
 
@@ -77,9 +77,9 @@ class WifiWaiter {
         return this._onLogin;
     }
 
-    _setCheckingState(state) {
-        if (state !== this._isChecking) {
-            this._isChecking = state;
+    _setLoginState(state) {
+        if (state !== this._isLogingIn) {
+            this._isLogingIn = state;
             if (state && this._onLoginBegin) {
                 this._onLoginBegin();
             } else if (!state && this._onLoginEnd) {
@@ -89,4 +89,4 @@ class WifiWaiter {
     }
 }
 
-module.exports = WifiWaiter;
+module.exports = LoginWaiter;

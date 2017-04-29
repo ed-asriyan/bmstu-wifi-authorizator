@@ -50,23 +50,18 @@
             </div>
             <div id="page_login_submit_group" class="form-group">
                 <button id="page_login_submit_button" class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onLoginClick()">Sign in
+                        onclick="onLoginClick()">Sign in
                 </button>
             </div>
         </div>
 
-        <div id="page_authentication" align="middle">
-            <i class="page_icon fa fa-square-o fa-spin fa-3x fa-fw"></i>
-            <p class="page_caption">Connecting...</p>
-        </div>
-
-        <div id="page_authentication_loop" align="middle">
+        <div id="page_authenticating" align="middle">
             <i id="page_authentication_loop_icon" class="page_icon fa fa-wifi"></i>
-            <p class="page_caption">Please wait for Wi-Fi timeout...</p>
+            <p id="page_authenticating_caption" class="page_caption"></p>
             <div id="page_authentication_loop_cancel_group" class="form-group">
                 <button id="page_authentication_loop_cancel_button"
                         class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onAuthenticationLoopCancelClick()">Cancel
+                        onclick="onAuthenticationLoopCancelClick()">Cancel
                 </button>
             </div>
         </div>
@@ -84,22 +79,7 @@
             </div>
             <div id="page_connected_submit_group" class="form-group">
                 <button id="page_connected_submit_button" class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onLogoutClick()">Logout
-                </button>
-            </div>
-        </div>
-
-        <div id="page_authentication_error" class="form-horizontal" align="middle">
-            <i class="page_icon fa fa-times" aria-hidden="true"></i>
-            <p class="page_caption">Can not authenticate</p>
-            <div class="form-group">
-                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onAuthenticationErrorLoopedClick()">Wait for Wi-Fi timeout
-                </button>
-            </div>
-            <div class="form-group">
-                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onAuthenticationErrorGoBackClick()">Go back
+                        onclick="onLogoutClick()">Logout
                 </button>
             </div>
         </div>
@@ -110,22 +90,23 @@
         </div>
 
         <div id="page_disconnecting_error" class="form-horizontal" align="middle">
-            <i class="page_icon fa fa-times" aria-hidden="true"></i>
+            <!--<i class="page_icon fa fa-times" aria-hidden="true"></i>-->
             <p class="page_caption">Can not logout</p>
             <div class="form-group">
-                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default" title="Forget authenticating data"
-                        type="submit" onclick="onDisconnecingErrorForceLogoutClick()">Force
+                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        onclick="onLogoutErrorBackClick()">Go back
                 </button>
             </div>
             <div class="form-group">
                 <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
-                        type="submit" onclick="onDisconnecingErrorGoBackClick()">Go back
+                       onclick="onLogoutErrorTryAgainClick()">Try again
                 </button>
             </div>
-        </div>
-
-        <div id="page_error">
-            <p class="page_caption" id="page_error_description"></p>
+            <div class="form-group">
+                <button class="page_btn col-xs-offset-1 col-xs-10 btn btn-default"
+                        onclick="onLogoutErrorForceClick()">Force
+                </button>
+            </div>
         </div>
     </div>
 </div>
